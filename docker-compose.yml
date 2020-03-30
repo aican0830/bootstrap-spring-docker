@@ -1,0 +1,43 @@
+version: '3'
+services:
+  eureka-server:
+    container_name: eureka-server
+    network_mode: "host"
+    #restart: always
+    working_dir: /opt/app
+    build: eureka-server
+    ports:
+      - "8761:8761"
+    volumes:
+      - ./eureka-server:/opt/app
+      - ./eureka-server/logs:/opt/app/logs
+
+  fanjiu-app:
+    container_name: fanjiu-app
+    network_mode: "host"
+    restart: always
+    working_dir: /opt/app
+    build: app
+    volumes:
+      - ./app:/opt/app
+      - ./app/logs:/opt/app/logs
+    ports:
+      - "8088:8088"
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+
+  eureka-client:
+    container_name: eureka-client
+    network_mode: "host"
+    restart: always
+    working_dir: /opt/app
+    build: getway
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./getway:/opt/app
+      - ./getway/logs:/opt/app/logs
+    depends_on:
+      - eureka-server
+
